@@ -1,0 +1,58 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <SpaRoot>..\schooldonations.app.client</SpaRoot>
+    <SpaProxyLaunchCommand>npm start</SpaProxyLaunchCommand>
+    <SpaProxyServerUrl>https://localhost:15902</SpaProxyServerUrl>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\schooldonations.app.client\schooldonations.app.client.esproj">
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Duende.AccessTokenManagement.OpenIdConnect">
+      <Version>3.2.0</Version>
+    </PackageReference>
+    <PackageReference Include="Duende.BFF">
+      <Version>3.0.0</Version>
+    </PackageReference>
+    <PackageReference Include="Duende.BFF.Yarp">
+      <Version>3.0.0</Version>
+    </PackageReference>
+    <PackageReference Include="Duende.IdentityModel">
+      <Version>7.0.0</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect">
+      <Version>9.0.4</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.AspNetCore.SpaProxy">
+      <Version>9.*-*</Version>
+    </PackageReference>
+    <PackageReference Include="Serilog.AspNetCore">
+      <Version>9.0.0</Version>
+    </PackageReference>
+    <PackageReference Include="Serilog.Sinks.Console">
+      <Version>6.0.0</Version>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AdditionalFiles Include="Pages\Auth\AuthorizationCodeFlow.cshtml" />
+    <AdditionalFiles Include="Pages\Auth\AuthorizationCodeFlow2.cshtml" />
+    <AdditionalFiles Include="Pages\Auth\AuthorizationCodeFlow3.cshtml" />
+    <AdditionalFiles Include="Pages\Auth\M2M.cshtml" />
+    <AdditionalFiles Include="Pages\Auth\OidcIdentity.cshtml" />
+    <AdditionalFiles Include="Pages\Index.cshtml" />
+  </ItemGroup>
+
+</Project>

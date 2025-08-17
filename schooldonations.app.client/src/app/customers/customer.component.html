@@ -1,0 +1,13 @@
+<div class="data-component">
+    <h2>Data</h2>
+    <ng-container *ngIf="dataLoaded && customers && customers.length; else noData">
+        <ul>
+            <ng-container *ngFor="let customer of customers">
+                <li>{{ customer.firstName }}, {{ customer.lastName }}</li>
+            </ng-container>
+        </ul>
+    </ng-container>
+    <ng-template #noData>
+        <p>No data available.</p>
+    </ng-template>
+</div>

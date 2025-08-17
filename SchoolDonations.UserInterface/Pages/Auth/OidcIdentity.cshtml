@@ -1,0 +1,20 @@
+@page
+@model SchoolDonations.UserInterface.Pages.Auth.OidcIdentity
+
+<h2>Oidc Identity:</h2>
+<h2>Claims</h2>
+<dl>
+    @foreach (var claim in User.Claims)
+    {
+        <dt>@claim.Type</dt>
+        <dd>@claim.Value</dd>
+    }
+</dl>
+<h2>Properties</h2>
+<dl>
+    @foreach (var prop in Model.Items)
+    {
+        <dt>@prop.Key</dt>
+        <dd>@prop.Value</dd>
+    }
+</dl>

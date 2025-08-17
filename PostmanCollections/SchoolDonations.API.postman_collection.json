@@ -1,0 +1,184 @@
+{
+	"info": {
+		"_postman_id": "9490b813-e0ad-4419-9b3f-14dd7b65f539",
+		"name": "SchoolDonations.API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "14650872"
+	},
+	"item": [
+		{
+			"name": "Customers",
+			"item": [
+				{
+					"name": "localhost:5089/Customers",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var template = `\r",
+									"<style type=\"text/css\">\r",
+									"    .tftable {font-size:14px;color:#333333;width:100%;border-width: 1px;border-color: #87ceeb;border-collapse: collapse;}\r",
+									"    .tftable th {font-size:18px;background-color:#87ceeb;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;text-align:left;}\r",
+									"    .tftable tr {background-color:#ffffff;}\r",
+									"    .tftable td {font-size:14px;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;}\r",
+									"    .tftable tr:hover {background-color:#e0ffff;}\r",
+									"</style>\r",
+									"\r",
+									"<table class=\"tftable\" border=\"1\">\r",
+									"    <tr>\r",
+									"        <th>First Name</th>\r",
+									"        <th>Last Name</th>\r",
+									"        <th>Billing Address Line 1</th>\r",
+									"        <th>Billing Address Line 2</th>\r",
+									"        <th>Billing City</th>\r",
+									"        <th>Billing State</th>\r",
+									"        <th>Billing Zip Code</th>\r",
+									"        <th>Billing Country</th>\r",
+									"        <th>Shipping Address Line 1</th>\r",
+									"        <th>Shipping Address Line 2</th>\r",
+									"        <th>Shipping City</th>\r",
+									"        <th>Shipping State</th>\r",
+									"        <th>Shipping Zip Code</th>\r",
+									"        <th>Shipping Country</th>\r",
+									"    </tr>\r",
+									"    \r",
+									"    {{#each response}}\r",
+									"        <tr>\r",
+									"            <td>{{firstName}}</td>\r",
+									"            <td>{{lastName}}</td>\r",
+									"            <td>{{billingAddressLine1}}</td>\r",
+									"            <td>{{billingAddressLine2}}</td>\r",
+									"            <td>{{billingCity}}</td>\r",
+									"            <td>{{billingState}}</td>\r",
+									"            <td>{{billingZipCode}}</td>\r",
+									"            <td>{{billingCountry}}</td>\r",
+									"            <td>{{shippingAddressLine1}}</td>\r",
+									"            <td>{{shippingAddressLine2}}</td>\r",
+									"            <td>{{shippingCity}}</td>\r",
+									"            <td>{{shippingState}}</td>\r",
+									"            <td>{{shippingZipCode}}</td>\r",
+									"            <td>{{shippingCountry}}</td>\r",
+									"        </tr>\r",
+									"    {{/each}}\r",
+									"</table>\r",
+									"`;\r",
+									"\r",
+									"function constructVisualizerPayload() {\r",
+									"    return {response: pm.response.json()}\r",
+									"}\r",
+									"\r",
+									"pm.visualizer.set(template, constructVisualizerPayload());"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"packages": {},
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJSUzI1NiIsImtpZCI6IjdGQjg4NDU0NDEwQTU0OEFGRkE1NjY0MDY2MUYwRDJFIiwidHlwIjoiYXQrand0In0.eyJpc3MiOiJodHRwczovL2xvY2FsaG9zdDo1MDAxIiwibmJmIjoxNzQ1Nzk2MTY0LCJpYXQiOjE3NDU3OTYxNjQsImV4cCI6MTc0NTc5OTc2NCwic2NvcGUiOlsiU2Nob29sRG9uYXRpb25zLkFwaSJdLCJjbGllbnRfaWQiOiJTY2hvb2xEb25hdGlvbnNBcHAiLCJqdGkiOiIyOEQwQzA0MzMwMDBBRkFBMjJERTE1QUI2QTdFNjE1MyJ9.kEJBogWn1hJY_xInu073iNRl3RMvnqmY0fvNJlQ7j-5Kw54V69H5xt9JPW15Vw6l3EQTdZ2c08J1UnzE4r-WW1C_8xN7_6Zgw9lNWKZa-BprbJxGuqogmCs8FPREw2YOeM277niFAjfLRgtUI2QP5z0xsNhAapdYQPEuK7_v668A7K0WuWFB3kk53z5eHYYshhsZ0URwUXLPW0WODUhXmALy669d1oKe8-bpgPSUI-7rUYI1rW7RuUHHqqhdraGZChUBwjDqraD8ed6pvJUHcpHHsaGV6wdGXyXiVLYWmWJvN1VIe0XjW_UgUhyJOkQKOQYuUMd0nmxoixN39AQH8w",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": []
+						},
+						"url": {
+							"raw": "localhost:5089/Customers",
+							"host": [
+								"localhost"
+							],
+							"port": "5089",
+							"path": [
+								"Customers"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "HeartBeat",
+			"item": [
+				{
+					"name": "heartbeat/check-access - Success",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{read_write_access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:5089/heartbeat/check-access",
+							"host": [
+								"localhost"
+							],
+							"port": "5089",
+							"path": [
+								"heartbeat",
+								"check-access"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "heartbeat/check-access - Fail",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{read_only_access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:5089/heartbeat/check-access",
+							"host": [
+								"localhost"
+							],
+							"port": "5089",
+							"path": [
+								"heartbeat",
+								"check-access"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

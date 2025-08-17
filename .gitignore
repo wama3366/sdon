@@ -1,0 +1,118 @@
+# Ignore Visual Studio-specific files
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.vcxproj.*
+.idea/
+.angular/
+
+# Ignore build artifacts
+bin/
+obj/
+out/
+**/obj/
+**/bin/
+[Bb]uild/
+*.cache
+*.log
+*.ilk
+*.pdb
+*.resources
+*.tlog
+*.tmp
+*.csproj.user
+
+# Ignore Rider IDE files
+.idea/
+*.iml
+
+# Ignore Resharper files
+*.DotSettings.user
+
+# Ignore NuGet packages
+packages/
+!packages/repositories.config
+*.nupkg
+project.lock.json
+project.assets.json
+
+# Ignore Auto-generated code
+Generated_Code/
+
+# Ignore Temporary files
+*.tmp
+*.bak
+*.swp
+*.swo
+*.sln.docstates
+
+# Ignore JetBrains Rider / Resharper cache
+_ReSharper*/
+**/ReSharperSettings.xml
+**/ReSharperSolutionOptions.xml
+
+# Ignore coverage reports
+coverage/
+*.coverage
+*.coveragexml
+*.codecov
+
+# Ignore logs and debug files
+*.tlog
+*.log
+**/logs/
+
+# Ignore Publish artifacts
+publish/
+*.publishsettings
+*.publish.xml
+
+# Ignore user secrets (ASP.NET Core)
+secrets.json
+*.secrets.json
+
+# Ignore Azure DevOps artifacts
+*.rsp
+.vscode/
+*.testsettings
+*.vsix
+*.code-workspace
+.azure-pipelines.yml
+
+# Ignore database files
+*.mdf
+*.ldf
+*.db
+*.sqlite
+*.sqlite3
+
+# Ignore IDE-specific settings (Mac)
+.DS_Store
+
+# Ignore Node.js files in case of Blazor or Frontend apps
+node_modules/
+npm-debug.log
+yarn.lock
+
+# Ignore Python virtual environment (if using ML.NET)
+venv/
+__pycache__/
+*.pyc
+*.pyo
+
+# Ignore compiled stylesheets
+*.css.map
+
+# Ignore configuration files for local development
+appsettings.Development.json
+appsettings.Local.json
+
+# Ignore dotnet tools
+.dotnet_tools/
+.dotnet_env
+
+# Ignore temporary generated files
+temp/
+tmp/

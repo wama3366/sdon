@@ -1,0 +1,26 @@
+stages:
+  - info
+  - build
+  - test
+
+# Use our .NET SDK + Node Docker image for the build
+image: 192.168.0.101:6000/my-dotnet-sdk-with-node:9-22
+
+before_script:
+  - echo "Using .NET SDK version $DOTNET_VERSION"
+  - dotnet --version
+  - echo "This is running on runner:" $CI_RUNNER_DESCRIPTION
+
+build_solution:
+  stage: build
+  script:
+    - echo "Restoring NuGet packages"
+    - dotnet restore SchoolDonations.sln
+    - echo "Building the .NET class library"
+    - dotnet build SchoolDonations.sln --configuration Release
+
+run_tests:
+    stage:  test
+    script:
+      - echo "Running unit tests"
+      - dotnet test --blame --nologo --logger "console;verbosity=detailed"

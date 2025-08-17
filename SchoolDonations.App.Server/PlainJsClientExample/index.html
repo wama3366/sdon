@@ -1,0 +1,18 @@
+<main class="main">
+    <div class="user-status-container">
+        <h2>User Authentication & API Demo</h2>
+
+        <div class="button-group">
+            <button type="button" (click)="login()">Login</button>
+            <button type="button" (click)="logout()">Logout</button>
+            <button type="button" (click)="callLocalApi()">Call Local API</button>
+            <button type="button" (click)="callRemoteApi()">Call Remote API</button>
+        </div>
+
+        <div class="results">
+            <h3>Results</h3>
+            <pre id="results">{{ results }}</pre>
+        </div>
+    </div>
+</main>
+<router-outlet />
