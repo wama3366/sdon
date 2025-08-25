@@ -7,7 +7,6 @@ using Persistence.Concepts;
 using SchoolDonations.API.Configuration;
 using SchoolDonations.API.Controllers.Customers;
 using SchoolDonations.API.Middleware;
-using SchoolDonations.ApplicationServices;
 using SchoolDonations.ApplicationServices.Services.Customers;
 using SchoolDonations.CoreDomain.Aggregates.Customers;
 using SchoolDonations.CoreDomain.Aggregates.Customers.Persistence;
@@ -46,6 +45,7 @@ public class Program
                 .ReadFrom.Configuration(ctx.Configuration));
 
             builder.Services.AddControllers();
+            builder.Services.AddAutoMapper(typeof(Program).Assembly, typeof(CustomerService).Assembly);
             ConfigureAuth(builder);
             ConfigureDb(builder);
             ConfigureDi(builder);
@@ -79,6 +79,10 @@ public class Program
             containerBuilder.RegisterType<AppDateTime>().As<IAppDateTime>().InstancePerLifetimeScope();
 
             #region Customers
+
+            containerBuilder.RegisterType<CustomerPersistenceMapper>()
+                .As<IPersistenceMapper<Customer, CustomerPersistenceDto>>()
+                .InstancePerLifetimeScope();
 
             containerBuilder.RegisterType<CustomerService>().As<ICustomerService>()
                 .InstancePerLifetimeScope();

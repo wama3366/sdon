@@ -1,3 +1,4 @@
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Moq;
@@ -37,7 +38,13 @@ public class CustomerServiceTests
             new CustomerRepository(appDbContext),
             new DomainEventRepository(appDbContext, new AppDateTime(), new DomainEventPersistenceMapper()));
 
-        _customerService = new CustomerService(unitOfWork, new AppDateTime());
+        var mapperConfig = new MapperConfiguration(cfg =>
+        {
+            cfg.AddProfile<CustomerApplicationMappingProfile>();
+        });
+        var mapper = mapperConfig.CreateMapper();
+
+        _customerService = new CustomerService(unitOfWork, new AppDateTime(), mapper);
     }
 
     // [Fact]

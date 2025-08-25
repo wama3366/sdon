@@ -1,7 +1,8 @@
+using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SchoolDonations.ApplicationServices.Services.Customers;
-using SchoolDonations.CoreDomain.Aggregates.Customers;
-using SchoolDonations.CoreDomain.Values;
+using System.Collections.Generic;
 
 namespace SchoolDonations.API.Controllers.Customers;
 
@@ -9,12 +10,14 @@ namespace SchoolDonations.API.Controllers.Customers;
 [Route("[controller]")]
 public class CustomersController : ControllerBase
 {
+    private IMapper Mapper { get; }
     private ICustomerService CustomerService { get; }
     private ILogger<CustomersController> Logger { get; }
 
     #region Contruction
 
     public CustomersController(
+        IMapper mapper,
         ICustomerService customerService,
         ILogger<CustomersController> logger)
     {
@@ -30,14 +33,14 @@ public class CustomersController : ControllerBase
     public async Task<IActionResult> GetCustomerByIdAsync(long customerId)
     {
         var customer = await CustomerService.GetCustomerByIdAsync(customerId);
-        return Ok(FromDomain(customer));
+        return Ok(Mapper.Map<CustomerApiDto>(customer));
     }
 
     [HttpGet]
     public async Task<IActionResult> GetAllCustomers()
     {
         var customers = await CustomerService.GetAllCustomers();
-        return Ok(customers.Select(FromDomain));
+        return Ok(Mapper.Map<List<CustomerApiDto>>(customers));
     }
 
     #endregion Queries
@@ -47,11 +50,10 @@ public class CustomersController : ControllerBase
     [HttpPost]
     public async Task<CustomerApiDto> CreateCustomerAsync(CustomerApiDto customer)
     {
-        var domainCustomer = ToDomain(customer);
-
+        var appDtoCustomer = Mapper.Map<CustomerApplicationDto>(customer);
         var addedCustomer = await CustomerService.CreateCustomerAsync(domainCustomer);
 
-        return FromDomain(addedCustomer);
+        return Mapper.Map<CustomerApiDto>(addedCustomer);
     }
 
     #endregion Commands
