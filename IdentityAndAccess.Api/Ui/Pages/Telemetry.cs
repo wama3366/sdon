@@ -68,6 +68,7 @@ public static class Telemetry
         /// </summary>
         /// <param name="clientId">Client id</param>
         /// <param name="scopes">Scope names. Each element is added on it's own to the counter</param>
+        /// <param name="remember">Indicates if the consent decision is remembered</param>
         public static void ConsentGranted(string clientId, IEnumerable<string> scopes, bool remember)
         {
             ArgumentNullException.ThrowIfNull(scopes);
@@ -83,7 +84,7 @@ public static class Telemetry
         }
 
         /// <summary>
-        /// Helper method to increase <see cref="Counters.ConsentDenied"/> counter. The scopes
+        /// Helper method to increase <see cref="Counters.Consent"/> counter on denial. The scopes
         /// are expanded and called one by one to not cause a combinatory explosion of scopes.
         /// </summary>
         /// <param name="clientId">Client id</param>
@@ -112,13 +113,15 @@ public static class Telemetry
         /// Helper method to increase <see cref="Counters.UserLogin"/> counter.
         /// </summary>
         /// <param name="clientId">Client Id, if available</param>
+        /// <param name="idp">Idp/authentication scheme for external authentication, or "local" for built in.</param>
         public static void UserLogin(string clientId, string idp)
             => UserLoginCounter.Add(1, new(Tags.Client, clientId), new(Tags.Idp, idp));
 
         /// <summary>
-        /// Helper method to increase <see cref="Counters.UserLogin" counter on failure.
+        /// Helper method to increase <see cref="Counters.UserLogin"/> counter on failure.
         /// </summary>
         /// <param name="clientId">Client Id, if available</param>
+        /// <param name="idp">Idp/authentication scheme for external authentication, or "local" for built in.</param>
         /// <param name="error">Error message</param>
         public static void UserLoginFailure(string clientId, string idp, string error)
             => UserLoginCounter.Add(1, new(Tags.Client, clientId), new(Tags.Idp, idp), new(Tags.Error, error));
