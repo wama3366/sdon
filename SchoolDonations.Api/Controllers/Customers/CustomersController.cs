@@ -1,8 +1,8 @@
-using System.Security.Claims;
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using SchoolDonations.API.Mapping;
 using SchoolDonations.ApplicationServices.Services.Customers;
+using System.Collections.Generic;
 
 namespace SchoolDonations.API.Controllers.Customers;
 
@@ -10,18 +10,18 @@ namespace SchoolDonations.API.Controllers.Customers;
 [Route("[controller]")]
 public class CustomersController : ControllerBase
 {
-    private IApiMapper<CustomerApplicationDto, CustomerApiDto> CustomerMapper { get; }
+    private IMapper Mapper { get; }
     private ICustomerService CustomerService { get; }
     private ILogger<CustomersController> Logger { get; }
 
     #region Contruction
 
     public CustomersController(
-        IApiMapper<CustomerApplicationDto, CustomerApiDto> customerMapper,
+        IMapper mapper,
         ICustomerService customerService,
         ILogger<CustomersController> logger)
     {
-        CustomerMapper = customerMapper ?? throw new ArgumentNullException(nameof(customerMapper));
+        Mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         CustomerService = customerService ?? throw new ArgumentNullException(nameof(customerService));
         Logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
@@ -34,14 +34,14 @@ public class CustomersController : ControllerBase
     public async Task<IActionResult> GetCustomerByIdAsync(long customerId)
     {
         var customer = await CustomerService.GetCustomerByIdAsync(customerId);
-        return Ok(CustomerMapper.FromAppDto(customer));
+        return Ok(Mapper.Map<CustomerApiDto>(customer));
     }
 
     [HttpGet]
     public async Task<IActionResult> GetAllCustomers()
     {
         var customers = await CustomerService.GetAllCustomers();
-        return Ok(CustomerMapper.FromAppDto(customers));
+        return Ok(Mapper.Map<List<CustomerApiDto>>(customers));
     }
 
     #endregion Queries
@@ -51,11 +51,11 @@ public class CustomersController : ControllerBase
     [HttpPost]
     public async Task<CustomerApiDto> CreateCustomerAsync(CustomerApiDto customer)
     {
-        var appDtoCustomer = CustomerMapper.ToAppDto(customer);
+        var appDtoCustomer = Mapper.Map<CustomerApplicationDto>(customer);
 
         var addedCustomer = await CustomerService.CreateCustomerAsync(appDtoCustomer);
 
-        return CustomerMapper.FromAppDto(addedCustomer);
+        return Mapper.Map<CustomerApiDto>(addedCustomer);
     }
 
     #endregion Commands

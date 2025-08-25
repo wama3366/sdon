@@ -1,6 +1,8 @@
-﻿using SchoolDonations.CoreDomain.Aggregates.Customers;
+using AutoMapper;
+using SchoolDonations.CoreDomain.Aggregates.Customers;
 using SchoolDonations.CoreDomain.Dependencies.Infrastructure.Persistence;
 using Utilities.AppDateTime;
+using System.Collections.Generic;
 
 namespace SchoolDonations.ApplicationServices.Services.Customers;
 
@@ -8,18 +10,18 @@ public class CustomerService : ICustomerService
 {
     private IUnitOfWork UnitOfWork { get; }
     private IAppDateTime AppDateTime { get; }
-    private IApplicationMapper<Customer, CustomerApplicationDto> CustomerMapper { get; }
+    private IMapper Mapper { get; }
 
     #region Construction
 
     public CustomerService(
         IUnitOfWork unitOfWork,
         IAppDateTime appDateTime,
-        IApplicationMapper<Customer, CustomerApplicationDto> customerMapper)
+        IMapper mapper)
     {
         UnitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
         AppDateTime = appDateTime ?? throw new ArgumentNullException(nameof(appDateTime));
-        CustomerMapper = customerMapper ?? throw new ArgumentNullException(nameof(customerMapper));
+        Mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
 
     #endregion Construction
@@ -29,13 +31,13 @@ public class CustomerService : ICustomerService
     public async Task<CustomerApplicationDto> GetCustomerByIdAsync(long customerId)
     {
         var customer = await UnitOfWork.CustomerRepository.GetByIdAsync(customerId);
-        return CustomerMapper.FromDomain(customer);
+        return Mapper.Map<CustomerApplicationDto>(customer);
     }
 
     public async Task<List<CustomerApplicationDto>> GetAllCustomers()
     {
         var customers = await UnitOfWork.CustomerRepository.GetAllAsync();
-        return CustomerMapper.FromDomain(customers);
+        return Mapper.Map<List<CustomerApplicationDto>>(customers);
     }
 
     #endregion Queries
@@ -44,7 +46,7 @@ public class CustomerService : ICustomerService
 
     public async Task<CustomerApplicationDto> CreateCustomerAsync(CustomerApplicationDto customerDto)
     {
-        var customer = CustomerMapper.ToDomain(customerDto);
+        var customer = Mapper.Map<Customer>(customerDto);
 
         // Persist
         var addResult = await UnitOfWork.CustomerRepository.AddAsync(customer);
@@ -56,12 +58,12 @@ public class CustomerService : ICustomerService
         // Lazy.Value Must only be called after SaveChanges or SaveChangesAsync
         var addedCustomer = addResult.Value;
 
-        return CustomerMapper.FromDomain(addedCustomer);
+        return Mapper.Map<CustomerApplicationDto>(addedCustomer);
     }
 
     public async Task ActivateCustomer(CustomerApplicationDto customerDto)
     {
-        var customer = CustomerMapper.ToDomain(customerDto);
+        var customer = Mapper.Map<Customer>(customerDto);
         customer.Activate(AppDateTime.UtcNow);
 
         // Persist
@@ -72,7 +74,7 @@ public class CustomerService : ICustomerService
 
     public async Task DeactivateCustomer(CustomerApplicationDto customerDto)
     {
-        var customer = CustomerMapper.ToDomain(customerDto);
+        var customer = Mapper.Map<Customer>(customerDto);
         customer.Deactivate(AppDateTime.UtcNow);
 
         // Persist
@@ -83,3 +85,4 @@ public class CustomerService : ICustomerService
 
     #endregion Commands
 }
+
