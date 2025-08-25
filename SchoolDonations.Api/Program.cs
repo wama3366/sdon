@@ -80,10 +80,6 @@ public class Program
 
             #region Customers
 
-            containerBuilder.RegisterType<CustomerPersistenceMapper>()
-                .As<IPersistenceMapper<Customer, CustomerPersistenceDto>>()
-                .InstancePerLifetimeScope();
-
             containerBuilder.RegisterType<CustomerService>().As<ICustomerService>()
                 .InstancePerLifetimeScope();
 

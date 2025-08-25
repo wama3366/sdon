@@ -34,7 +34,7 @@ public class CustomerServiceTests
         var appDbContext = new AppDbContext(optionsBuilder.Options, dbSettings.Object);
         var unitOfWork = new UnitOfWork(
             appDbContext,
-            new CustomerRepository(appDbContext, new AppDateTime(), new CustomerPersistenceMapper()),
+            new CustomerRepository(appDbContext),
             new DomainEventRepository(appDbContext, new AppDateTime(), new DomainEventPersistenceMapper()));
 
         _customerService = new CustomerService(unitOfWork, new AppDateTime());
