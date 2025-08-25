@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Persistence.Concepts;
+using SchoolDonations.CoreDomain.Aggregates.Customers;
 using SchoolDonations.EFCore.Customers;
 using SchoolDonations.EFCore.DomainEvents;
 
@@ -11,7 +12,7 @@ public class AppDbContext : DbContext
 {
     #region DBSets
 
-    internal DbSet<CustomerPersistenceDto> Customers { get; set;  }
+    internal DbSet<Customer> Customers { get; set;  }
     internal DbSet <DomainEventDto> DomainEvents { get; set; }
 
     #endregion DBSets
