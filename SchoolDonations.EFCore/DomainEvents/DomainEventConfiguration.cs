@@ -14,7 +14,7 @@ public class DomainConfiguration : IEntityTypeConfiguration<DomainEventDto>
         builder.Property(x => x.Id).HasColumnName("id").ValueGeneratedOnAdd();
         builder.Property(x => x.UniqueEventId).HasColumnName("unique_event_id").HasMaxLength(50).IsRequired();
         builder.Property(x => x.EventData).HasColumnName("event_data").HasMaxLength(50).IsRequired();
-        builder.Property(x => x.OccurredOn).HasColumnName("occured_on").IsRequired();
+        builder.Property(x => x.OccurredOn).HasColumnName("occurred_on").IsRequired();
         builder.Property(x => x.PublishedOn).HasColumnName("published_on");
 
         #endregion Data Columns

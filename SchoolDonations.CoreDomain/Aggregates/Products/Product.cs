@@ -30,9 +30,9 @@ public class Product : Entity<ProductId>
 
     #region Methods
 
-    public static Product Add(Product product, DateTimeOffset occuredOn)
+    public static Product Add(Product product, DateTimeOffset occurredOn)
     {
-        var @event = new ProductAdded(product, occuredOn);
+        var @event = new ProductAdded(product, occurredOn);
         product.AddDomainEvent(@event);
         return product;
     }
