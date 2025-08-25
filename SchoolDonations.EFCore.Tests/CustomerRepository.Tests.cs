@@ -68,17 +68,31 @@ public class CustomerRepositoryTests
     public async Task AddAsync_ShouldAddCustomer()
     {
         // Arrange
-        var customer = new Customer(new CustomerId(1)) { Name = new PersonName { FirstName = "John", LastName = "Doe" } };
+        var customer = new Customer(new CustomerId(1))
+        {
+            Name = new PersonName { FirstName = "John", LastName = "Doe" }
+        };
+        var before = _appDateTime.UtcNow;
 
         // Act
         var result = await _customerRepository.AddAsync(customer);
+        await _appDbContext.SaveChangesAsync();
 
         // Assert
-        await _appDbContext.SaveChangesAsync();
         customer = result.Value;
+        var createdDto = await _appDbContext.Customers.FindAsync(customer.Id.Value);
+
         Assert.NotNull(result);
         Assert.Equal("John", customer.Name.FirstName);
         Assert.Equal("Doe", customer.Name.LastName);
+        Assert.NotNull(createdDto);
+        Assert.Equal("System", createdDto!.CreatedBy);
+        Assert.Equal("System", createdDto.ModifiedBy);
+        Assert.NotEqual(default, createdDto.CreatedAt);
+        Assert.NotEqual(default, createdDto.ModifiedAt);
+        Assert.True(createdDto.CreatedAt.UtcDateTime >= before);
+        Assert.True(createdDto.ModifiedAt.UtcDateTime >= before);
+        Assert.Equal(1, createdDto.RowVersion);
         Assert.Equal(1, _appDbContext.Customers.Count());
     }
 
@@ -98,6 +112,29 @@ public class CustomerRepositoryTests
         var updated = await _appDbContext.Customers.FindAsync(customerDto.Id);
         Assert.Equal("John2", updated?.FirstName);
         Assert.Equal("Doe2", updated?.LastName);
+    }
+
+    [Fact]
+    public async Task UpdateAsync_ShouldIncrementRowVersionAndUpdateMetaData()
+    {
+        // Arrange
+        var customerDto = AddCustomer();
+        var originalModifiedAt = customerDto.ModifiedAt;
+        var originalRowVersion = customerDto.RowVersion;
+
+        var domainCustomer = new CustomerPersistenceMapper().ToDomain(customerDto);
+        domainCustomer.Name.FirstName = "John2";
+
+        // Act
+        await _customerRepository.UpdateAsync(domainCustomer);
+        await _appDbContext.SaveChangesAsync();
+
+        // Assert
+        var updatedDto = await _appDbContext.Customers.FindAsync(customerDto.Id);
+        Assert.NotNull(updatedDto);
+        Assert.Equal(originalRowVersion + 1, updatedDto!.RowVersion);
+        Assert.Equal("System", updatedDto.ModifiedBy);
+        Assert.True(updatedDto.ModifiedAt > originalModifiedAt);
     }
 
     [Fact]
