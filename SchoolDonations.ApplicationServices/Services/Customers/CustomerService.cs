@@ -12,6 +12,7 @@ public class CustomerService : ICustomerService
     private IAppDateTime AppDateTime { get; }
     private IMapper Mapper { get; }
 
+
     #region Construction
 
     public CustomerService(
@@ -28,13 +29,13 @@ public class CustomerService : ICustomerService
 
     #region Queries
 
-    public async Task<CustomerApplicationDto> GetCustomerByIdAsync(long customerId)
+    public async Task<Customer> GetCustomerByIdAsync(long customerId)
     {
         var customer = await UnitOfWork.CustomerRepository.GetByIdAsync(customerId);
         return Mapper.Map<CustomerApplicationDto>(customer);
     }
 
-    public async Task<List<CustomerApplicationDto>> GetAllCustomers()
+    public async Task<List<Customer>> GetAllCustomers()
     {
         var customers = await UnitOfWork.CustomerRepository.GetAllAsync();
         return Mapper.Map<List<CustomerApplicationDto>>(customers);
@@ -44,10 +45,9 @@ public class CustomerService : ICustomerService
 
     #region Commands
 
-    public async Task<CustomerApplicationDto> CreateCustomerAsync(CustomerApplicationDto customerDto)
+    public async Task<Customer> CreateCustomerAsync(Customer customer)
     {
         var customer = Mapper.Map<Customer>(customerDto);
-
         // Persist
         var addResult = await UnitOfWork.CustomerRepository.AddAsync(customer);
 
@@ -61,7 +61,7 @@ public class CustomerService : ICustomerService
         return Mapper.Map<CustomerApplicationDto>(addedCustomer);
     }
 
-    public async Task ActivateCustomer(CustomerApplicationDto customerDto)
+    public async Task ActivateCustomer(Customer customer)
     {
         var customer = Mapper.Map<Customer>(customerDto);
         customer.Activate(AppDateTime.UtcNow);
@@ -72,7 +72,7 @@ public class CustomerService : ICustomerService
         await UnitOfWork.SaveChangesAsync();
     }
 
-    public async Task DeactivateCustomer(CustomerApplicationDto customerDto)
+    public async Task DeactivateCustomer(Customer customer)
     {
         var customer = Mapper.Map<Customer>(customerDto);
         customer.Deactivate(AppDateTime.UtcNow);
