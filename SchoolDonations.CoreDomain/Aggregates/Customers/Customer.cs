@@ -35,24 +35,24 @@ public class Customer : Entity<CustomerId>
 
     #region Methods
 
-    public void Activate( DateTimeOffset occuredOn)
+    public void Activate( DateTimeOffset occurredOn)
     {
-        SetStatus(CustomerStatus.Active, occuredOn);
+        SetStatus(CustomerStatus.Active, occurredOn);
     }
 
-    public void Deactivate( DateTimeOffset occuredOn)
+    public void Deactivate( DateTimeOffset occurredOn)
     {
-        SetStatus(CustomerStatus.Inactive, occuredOn);
+        SetStatus(CustomerStatus.Inactive, occurredOn);
     }
 
     #region Private Methods
 
-    private void SetStatus(CustomerStatus newStatus, DateTimeOffset occuredOn)
+    private void SetStatus(CustomerStatus newStatus, DateTimeOffset occurredOn)
     {
         var originalStatus = Status;
         Status = newStatus;
 
-        var @event = new CustomerStatusChanged(this, originalStatus, newStatus, occuredOn);
+        var @event = new CustomerStatusChanged(this, originalStatus, newStatus, occurredOn);
         AddDomainEvent(@event);
     }
 
