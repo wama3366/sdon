@@ -1,11 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Moq;
 using Persistence.Concepts;
 using SchoolDonations.CoreDomain.Aggregates.Customers;
 using SchoolDonations.CoreDomain.Values;
 using SchoolDonations.EFCore.Customers;
-using Utilities.AppDateTime;
 
 namespace SchoolDonations.EFCore.Tests;
 
@@ -13,9 +12,7 @@ public class CustomerRepositoryTests
 {
     private readonly AppDbContext _appDbContext;
     private readonly CustomerRepository _customerRepository;
-    private readonly AppDateTime _appDateTime;
 
-    // TODO: Add tests to check for ModifiedAt and CreatedAt and ModifiedBy and CreatedBy and RowVersion
     public CustomerRepositoryTests()
     {
         var dbSettings = new Mock<IOptionsSnapshot<DbSettings>>();
@@ -26,22 +23,14 @@ public class CustomerRepositoryTests
             .Options;
 
         _appDbContext = new AppDbContext(options, dbSettings.Object);
-        _customerRepository = new CustomerRepository(_appDbContext, new AppDateTime(), new CustomerPersistenceMapper());
-        _appDateTime = new();
+        _customerRepository = new CustomerRepository(_appDbContext);
     }
-
-    #region Queries
 
     [Fact]
     public async Task GetByIdAsync_ShouldReturnCustomer()
     {
-        // Arrange
-        var customerDto = AddCustomer();
-
-        // Act
-        var result = await _customerRepository.GetByIdAsync(customerDto.Id);
-
-        // Assert
+        var customer = AddCustomer();
+        var result = await _customerRepository.GetByIdAsync(customer.Id.Value);
         Assert.NotNull(result);
         Assert.Equal("John", result.Name.FirstName);
         Assert.Equal("Doe", result.Name.LastName);
@@ -50,155 +39,76 @@ public class CustomerRepositoryTests
     [Fact]
     public async Task GetAllAsync_ShouldReturnAllCustomers()
     {
-        // Arrange
         AddCustomers();
-
-        // Act
         var customers = await _customerRepository.GetAllAsync();
-
-        // Assert
         Assert.Equal(2, customers.Count);
     }
-
-    #endregion Queries
-
-    #region Commands
 
     [Fact]
     public async Task AddAsync_ShouldAddCustomer()
     {
-        // Arrange
-        var customer = new Customer(new CustomerId(1))
+        var customer = new Customer(new CustomerId(0))
         {
             Name = new PersonName { FirstName = "John", LastName = "Doe" }
         };
-        var before = _appDateTime.UtcNow;
 
-        // Act
         var result = await _customerRepository.AddAsync(customer);
         await _appDbContext.SaveChangesAsync();
 
-        // Assert
-        customer = result.Value;
-        var createdDto = await _appDbContext.Customers.FindAsync(customer.Id.Value);
-
+        var created = await _appDbContext.Customers.FindAsync(customer.Id.Value);
         Assert.NotNull(result);
-        Assert.Equal("John", customer.Name.FirstName);
-        Assert.Equal("Doe", customer.Name.LastName);
-        Assert.NotNull(createdDto);
-        Assert.Equal("System", createdDto!.CreatedBy);
-        Assert.Equal("System", createdDto.ModifiedBy);
-        Assert.NotEqual(default, createdDto.CreatedAt);
-        Assert.NotEqual(default, createdDto.ModifiedAt);
-        Assert.True(createdDto.CreatedAt.UtcDateTime >= before);
-        Assert.True(createdDto.ModifiedAt.UtcDateTime >= before);
-        Assert.Equal(1, createdDto.RowVersion);
-        Assert.Equal(1, _appDbContext.Customers.Count());
+        Assert.NotNull(created);
+        Assert.Equal("John", created.Name.FirstName);
     }
 
     [Fact]
     public async Task UpdateAsync_ShouldModifyCustomer()
     {
-        // Arrange
-        var customerDto = AddCustomer();
+        var customer = AddCustomer();
+        customer.Name = new PersonName { FirstName = "John2", LastName = "Doe2" };
 
-        customerDto.FirstName = "John2";
-        customerDto.LastName = "Doe2";
-
-        // Act
-        await _customerRepository.UpdateAsync(new CustomerPersistenceMapper().ToDomain(customerDto));
-
-        // Assert
-        var updated = await _appDbContext.Customers.FindAsync(customerDto.Id);
-        Assert.Equal("John2", updated?.FirstName);
-        Assert.Equal("Doe2", updated?.LastName);
-    }
-
-    [Fact]
-    public async Task UpdateAsync_ShouldIncrementRowVersionAndUpdateMetaData()
-    {
-        // Arrange
-        var customerDto = AddCustomer();
-        var originalModifiedAt = customerDto.ModifiedAt;
-        var originalRowVersion = customerDto.RowVersion;
-
-        var domainCustomer = new CustomerPersistenceMapper().ToDomain(customerDto);
-        domainCustomer.Name.FirstName = "John2";
-
-        // Act
-        await _customerRepository.UpdateAsync(domainCustomer);
+        await _customerRepository.UpdateAsync(customer);
         await _appDbContext.SaveChangesAsync();
 
-        // Assert
-        var updatedDto = await _appDbContext.Customers.FindAsync(customerDto.Id);
-        Assert.NotNull(updatedDto);
-        Assert.Equal(originalRowVersion + 1, updatedDto!.RowVersion);
-        Assert.Equal("System", updatedDto.ModifiedBy);
-        Assert.True(updatedDto.ModifiedAt > originalModifiedAt);
+        var updated = await _appDbContext.Customers.FindAsync(customer.Id.Value);
+        Assert.Equal("John2", updated.Name.FirstName);
+        Assert.Equal("Doe2", updated.Name.LastName);
     }
 
     [Fact]
     public async Task DeleteAsync_ShouldRemoveCustomer()
     {
-        // Arrange
-        var customerDto = AddCustomer();
+        var customer = AddCustomer();
 
-        // Act
-        await _customerRepository.DeleteAsync(customerDto.Id);
-
-        // Assert
+        await _customerRepository.DeleteAsync(customer.Id.Value);
         await _appDbContext.SaveChangesAsync();
-        var deleted = await _appDbContext.Customers.FindAsync(customerDto.Id);
+
+        var deleted = await _appDbContext.Customers.FindAsync(customer.Id.Value);
         Assert.Null(deleted);
     }
 
-    #endregion Commands
-
-    #region Helpers
-
-    private CustomerPersistenceDto AddCustomer()
+    private Customer AddCustomer()
     {
-        var customerDto = new CustomerPersistenceDto
+        var customer = new Customer(new CustomerId(0))
         {
-            FirstName = "John",
-            LastName = "Doe",
-            ModifiedAt = _appDateTime.UtcNow,
-            ModifiedBy = "User",
-            CreatedAt = _appDateTime.UtcNow,
-            CreatedBy = "User",
-            RowVersion = new Random().Next()
+            Name = new PersonName { FirstName = "John", LastName = "Doe" }
         };
-        _appDbContext.Customers.Add(customerDto);
+        _appDbContext.Customers.Add(customer);
         _appDbContext.SaveChanges();
-        return customerDto;
+        return customer;
     }
 
     private void AddCustomers()
     {
-        var customerDto1 = new CustomerPersistenceDto
+        var customer1 = new Customer(new CustomerId(0))
         {
-            FirstName = "John",
-            LastName = "Doe",
-            ModifiedAt = _appDateTime.UtcNow,
-            ModifiedBy = "User",
-            CreatedAt = _appDateTime.UtcNow,
-            CreatedBy = "User",
-            RowVersion = new Random().Next()
+            Name = new PersonName { FirstName = "John", LastName = "Doe" }
         };
-        var customerDto2 = new CustomerPersistenceDto
+        var customer2 = new Customer(new CustomerId(0))
         {
-            FirstName = "John2",
-            LastName = "Doe",
-            ModifiedAt = _appDateTime.UtcNow,
-            ModifiedBy = "User2",
-            CreatedAt = _appDateTime.UtcNow,
-            CreatedBy = "User2",
-            RowVersion = new Random().Next()
+            Name = new PersonName { FirstName = "Jane", LastName = "Doe" }
         };
-
-        _appDbContext.Customers.AddRange([customerDto1, customerDto2]);
+        _appDbContext.Customers.AddRange(customer1, customer2);
         _appDbContext.SaveChanges();
     }
-
-    #endregion Helpers
 }

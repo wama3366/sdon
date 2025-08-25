@@ -89,10 +89,6 @@ public class Program
                 .As<IApplicationMapper<Customer, CustomerApplicationDto>>()
                 .InstancePerLifetimeScope();
 
-            containerBuilder.RegisterType<CustomerPersistenceMapper>()
-                .As<IPersistenceMapper<Customer, CustomerPersistenceDto>>()
-                .InstancePerLifetimeScope();
-
             containerBuilder.RegisterType<CustomerService>().As<ICustomerService>()
                 .InstancePerLifetimeScope();
 
