@@ -28,6 +28,7 @@ public class Customer : Entity<CustomerId>
         Name = new PersonName(customer.Name);
         BillingAddress = new Address(customer.BillingAddress);
         ShippingAddress = new Address(customer.ShippingAddress);
+        Status = customer.Status;
     }
 
     #endregion Construction

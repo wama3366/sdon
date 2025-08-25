@@ -70,8 +70,8 @@ public record Address : Value
     {
         return $"""
                 {AddressLine1},
-                {AddressLine1},
-                {City}, {State} {ZipCode}, 
+                {AddressLine2},
+                {City}, {State} {ZipCode},
                 {Country}
                 """;
     }
