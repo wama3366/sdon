@@ -6,7 +6,6 @@ using Microsoft.Extensions.Options;
 using Persistence.Concepts;
 using SchoolDonations.API.Configuration;
 using SchoolDonations.API.Controllers.Customers;
-using SchoolDonations.API.Mapping;
 using SchoolDonations.API.Middleware;
 using SchoolDonations.ApplicationServices;
 using SchoolDonations.ApplicationServices.Services.Customers;
@@ -80,14 +79,6 @@ public class Program
             containerBuilder.RegisterType<AppDateTime>().As<IAppDateTime>().InstancePerLifetimeScope();
 
             #region Customers
-
-            containerBuilder.RegisterType<CustomerApiMapper>()
-                .As<IApiMapper<CustomerApplicationDto, CustomerApiDto>>()
-                .InstancePerLifetimeScope();
-
-            containerBuilder.RegisterType<CustomerApplicationMapper>()
-                .As<IApplicationMapper<Customer, CustomerApplicationDto>>()
-                .InstancePerLifetimeScope();
 
             containerBuilder.RegisterType<CustomerPersistenceMapper>()
                 .As<IPersistenceMapper<Customer, CustomerPersistenceDto>>()

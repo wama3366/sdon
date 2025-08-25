@@ -4,6 +4,7 @@ using Moq;
 using Persistence.Concepts;
 using SchoolDonations.ApplicationServices.Services.Customers;
 using SchoolDonations.CoreDomain.Aggregates.Customers;
+using SchoolDonations.CoreDomain.Values;
 using SchoolDonations.EFCore;
 using SchoolDonations.EFCore.Customers;
 using SchoolDonations.EFCore.DomainEvents;
@@ -35,71 +36,89 @@ public class CustomerServiceTests
             appDbContext,
             new CustomerRepository(appDbContext, new AppDateTime(), new CustomerPersistenceMapper()),
             new DomainEventRepository(appDbContext, new AppDateTime(), new DomainEventPersistenceMapper()));
-        IApplicationMapper<Customer, CustomerApplicationDto> customerMapper = new CustomerApplicationMapper();
-        _customerService = new CustomerService(unitOfWork, new AppDateTime(), customerMapper);
+
+        _customerService = new CustomerService(unitOfWork, new AppDateTime());
     }
 
     // [Fact]
     public async Task GetCustomerByIdAsync_ShouldReturnCustomer()
     {
         // Arrange
-        var customerDto = new CustomerApplicationDto()
+        var customer = new Customer(new CustomerId(0))
         {
-            FirstName = "John",
-            LastName = "Doe",
-            BillingAddressLine1 = "123 Main Street",
-            BillingAddressLine2 = "Apt #2",
-            BillingCity = "Raleigh",
-            BillingState = "NC",
-            BillingZipCode = "12345",
-            BillingCountry = "USA",
-            ShippingAddressLine1 = "321 Main Street",
-            ShippingAddressLine2 = "Apt #3",
-            ShippingCity = "Charlotte",
-            ShippingState = "NC",
-            ShippingZipCode = "54321",
-            ShippingCountry = "USA",
+            Name = new PersonName
+            {
+                FirstName = "John",
+                LastName = "Doe",
+            },
+            BillingAddress = new Address
+            {
+                AddressLine1 = "123 Main Street",
+                AddressLine2 = "Apt #2",
+                City = "Raleigh",
+                State = UsState.GetByAbbreviation("NC"),
+                ZipCode = new ZipCode("12345"),
+                Country = "USA",
+            },
+            ShippingAddress = new Address
+            {
+                AddressLine1 = "321 Main Street",
+                AddressLine2 = "Apt #3",
+                City = "Charlotte",
+                State = UsState.GetByAbbreviation("NC"),
+                ZipCode = new ZipCode("54321"),
+                Country = "USA",
+            },
         };
-        var addedCustomer = await _customerService.CreateCustomerAsync(customerDto);
+        var addedCustomer = await _customerService.CreateCustomerAsync(customer);
 
         // Act
-        var result = await _customerService.GetCustomerByIdAsync(addedCustomer.Id);
+        var result = await _customerService.GetCustomerByIdAsync(addedCustomer.Id.Value);
 
         // Assert
         Assert.NotNull(result);
         Assert.Equal(addedCustomer.Id, result.Id);
-        Assert.Equal(addedCustomer.FirstName, result.FirstName);
-        Assert.Equal(addedCustomer.LastName, result.LastName);
+        Assert.Equal(addedCustomer.Name.FirstName, result.Name.FirstName);
+        Assert.Equal(addedCustomer.Name.LastName, result.Name.LastName);
     }
 
     // [Fact]
     public async Task CreateCustomerAsync_ShouldCreateCustomer()
     {
         // Arrange
-        var customerDto = new CustomerApplicationDto()
+        var customer = new Customer(new CustomerId(0))
         {
-            FirstName = "John",
-            LastName = "Doe",
-            BillingAddressLine1 = "123 Main Street",
-            BillingAddressLine2 = "Apt #2",
-            BillingCity = "Raleigh",
-            BillingState = "NC",
-            BillingZipCode = "12345",
-            BillingCountry = "USA",
-            ShippingAddressLine1 = "321 Main Street",
-            ShippingAddressLine2 = "Apt #3",
-            ShippingCity = "Charlotte",
-            ShippingState = "NC",
-            ShippingZipCode = "54321",
-            ShippingCountry = "USA",
+            Name = new PersonName
+            {
+                FirstName = "John",
+                LastName = "Doe",
+            },
+            BillingAddress = new Address
+            {
+                AddressLine1 = "123 Main Street",
+                AddressLine2 = "Apt #2",
+                City = "Raleigh",
+                State = UsState.GetByAbbreviation("NC"),
+                ZipCode = new ZipCode("12345"),
+                Country = "USA",
+            },
+            ShippingAddress = new Address
+            {
+                AddressLine1 = "321 Main Street",
+                AddressLine2 = "Apt #3",
+                City = "Charlotte",
+                State = UsState.GetByAbbreviation("NC"),
+                ZipCode = new ZipCode("54321"),
+                Country = "USA",
+            },
         };
 
         // Act
-        var result = await _customerService.CreateCustomerAsync(customerDto);
+        var result = await _customerService.CreateCustomerAsync(customer);
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal("John", result.FirstName);
-        Assert.Equal("Doe", result.LastName);
+        Assert.Equal("John", result.Name.FirstName);
+        Assert.Equal("Doe", result.Name.LastName);
     }
 }

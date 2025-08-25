@@ -1,21 +1,23 @@
+using SchoolDonations.CoreDomain.Aggregates.Customers;
+
 namespace SchoolDonations.ApplicationServices.Services.Customers;
 
 public interface ICustomerService
 {
     #region Queries
 
-    Task<CustomerApplicationDto> GetCustomerByIdAsync(long customerId);
-    Task<List<CustomerApplicationDto>> GetAllCustomers();
+    Task<Customer> GetCustomerByIdAsync(long customerId);
+    Task<List<Customer>> GetAllCustomers();
 
     #endregion Queries
 
     #region Commands
 
-    Task<CustomerApplicationDto> CreateCustomerAsync(CustomerApplicationDto customerDto);
+    Task<Customer> CreateCustomerAsync(Customer customer);
 
-    Task ActivateCustomer(CustomerApplicationDto customerDto);
+    Task ActivateCustomer(Customer customer);
 
-    Task DeactivateCustomer(CustomerApplicationDto customerDto);
+    Task DeactivateCustomer(Customer customer);
 
     #endregion Commands
 }
